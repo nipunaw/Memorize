@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-//Test
+
 // View - UI, declarative, reactive, stateless, signals/calls intent
 struct EmojiMemoryGameView: View { // Specify struct behaves like a View (adheres to 'View' protocol)
     @ObservedObject var game: EmojiMemoryGame // Designate var to hear announcements (needs to be var)
