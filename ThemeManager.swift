@@ -17,7 +17,7 @@ struct ThemeManager: View {
                 ForEach(store.themes) { theme in
                     NavigationLink(destination: EmojiMemoryGameView(game: EmojiMemoryGame(theme: $store.themes[theme]))) {
                         VStack(alignment: .leading) {
-                            Text(theme.name).foregroundColor(.themeColor)
+                            Text(theme.name)
                             Text(theme.numPairs + " pairs from " + theme.emojis)
                         }
                         .gesture(editMode == .active ? tap : nil)

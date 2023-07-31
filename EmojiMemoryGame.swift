@@ -9,10 +9,10 @@ import SwiftUI
 
 //View Model - announcer, interpreter, gatekeeper
 class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of changes
-    typealias Card = MemoryGame<String>.Card // Type alias allows us to simply call this typing a 'Card'
+    typealias Card = MemoryGame<Character>.Card // Type alias allows us to simply call this typing a 'Card'
     
-    private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
-        MemoryGame<String>(numberOfPairsOfCards: theme.numPairs) {_ in
+    private static func createMemoryGame(theme: Theme) -> MemoryGame<Character> {
+        MemoryGame<Character>(numberOfPairsOfCards: theme.numPairs) {_ in
             theme.emojis.randomElement()!
         }
     }
@@ -22,7 +22,7 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
         model = EmojiMemoryGame.createMemoryGame(theme: theme)
     }
     
-    @Published private var model: MemoryGame<String> // We can create a collection of memory games with different themes?
+    @Published private var model: MemoryGame<Character> // We can create a collection of memory games with different themes?
     private var theme: Theme
     // Published - designates object to observe and announce the changes of
     // private - no write or read access to this 'model' variable
@@ -59,7 +59,7 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
         model = EmojiMemoryGame.createMemoryGame(theme: theme)
     }
 
-    func changeTheme(theme: theme) {
+    func changeTheme(theme: Theme) {
         self.theme = theme
         newGame()
     }

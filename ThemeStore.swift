@@ -76,10 +76,11 @@ class ThemeStore: ObservableObject {
         return index % themes.count
     }
     
-    func addTheme(named name: String, color: String, emojis: String? = nil, numPairs: Int = emojis.count, at index: Int = 0) {
+    // Might have to make emojis optional
+    func addTheme(named name: String, color: String, emojis: String = "", numPairs: Int = 0, at index: Int = 0) {
         let unique = (themes.max(by: { $0.id < $1.id })?.id ?? 0) + 1 // Find a unique ID
-        let safeNumPairs = numPairs <= emojis.count ? numPairs : emojis.count // Determine safe number of pairs
-        let theme = Theme(name: name, color: color, emojis: emojis ?? "", numPairs: safeNumPairs, id: unique)
+        let safeNumPairs = emojis.count >= numPairs ? numPairs : emojis.count
+        let theme = Theme(name: name, color: color, emojis: emojis, numPairs: safeNumPairs, id: unique)
         let safeIndex = min(max(index, 0), themes.count)
         themes.insert(theme, at: safeIndex)
     } 
