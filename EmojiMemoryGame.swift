@@ -11,29 +11,19 @@ import SwiftUI
 class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of changes
     typealias Card = MemoryGame<String>.Card // Type alias allows us to simply call this typing a 'Card'
     
-    private static func createMemoryGame(theme: Theme<String>) -> MemoryGame<String> { //
-        MemoryGame<String>(numberOfPairsOfCards: theme.availableThemes[theme.currentTheme].numPairs) {_ in
-            theme.availableThemes[theme.currentTheme].emoji.randomElement()!
+    private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
+        MemoryGame<String>(numberOfPairsOfCards: theme.numPairs) {_ in
+            theme.emojis.randomElement()!
         }
     }
     
-    init() {
-        let baseTheme = Theme<String>(name: "Animals", emojis: ["🐶", "🐱", "🐭", "🐹"], numPairs: 4, cardColor: "red")
-        theme = baseTheme
-        theme.addTheme(name: "People", emojis: ["😀", "😃", "😄", "😁", "😆", "🥹", "😅", "😂"], numPairs: 10, cardColor: "blue")
-        theme.addTheme(name: "Sports", emojis: ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐"], numPairs: 8, cardColor: "green")
-        theme.addTheme(name: "Food", emojis: ["🍏", "🍎", "🍐"], numPairs: 2, cardColor: "orange")
-        theme.addTheme(name: "Vehicles", emojis: ["🚗", "🚕"], numPairs: 2, cardColor: "yellow")
-        theme.addTheme(name: "Devices", emojis: ["⌚️", "📱"], numPairs: 3, cardColor: "purple")
-        
-        let emojis = baseTheme.availableThemes[baseTheme.currentTheme].emoji.shuffled()
-        model = MemoryGame<String>(numberOfPairsOfCards: theme.availableThemes[theme.currentTheme].numPairs) {pairIndex in
-            emojis[pairIndex]
-        }
+    init(theme: Theme) {
+        self.theme = theme
+        model = EmojiMemoryGame.createMemoryGame(theme: theme)
     }
     
     @Published private var model: MemoryGame<String> // We can create a collection of memory games with different themes?
-    private var theme: Theme<String>
+    private var theme: Theme
     // Published - designates object to observe and announce the changes of
     // private - no write or read access to this 'model' variable
     
@@ -44,18 +34,18 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     }
     
     var themeName: String {
-        theme.availableThemes[theme.currentTheme].name
+        theme.name
     }
     
     var themeColor: Color { //Interprets color and returns
-        switch theme.availableThemes[theme.currentTheme].cardColor {
-            case "red": return Color.red
-            case "blue": return Color.blue
-            case "green": return Color.green
-            case "orange": return Color.orange
-            case "yellow": return Color.yellow
-            case "purple": return Color.purple
-            default: return Color.pink
+        switch theme.color {
+        case "red": return Color.red
+        case "blue": return Color.blue
+        case "green": return Color.green
+        case "orange": return Color.orange
+        case "yellow": return Color.yellow
+        case "purple": return Color.purple
+        default: return Color.pink
         }
     }
     
@@ -66,14 +56,12 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     
     // MARK: - Intent(s)
     func newGame() {
-        theme.changeTheme()
-        
-        let emojis = theme.availableThemes[theme.currentTheme].emoji.shuffled()
-//        model = EmojiMemoryGame.createMemoryGame(theme: theme)
-        
-        model = MemoryGame<String>(numberOfPairsOfCards: theme.availableThemes[theme.currentTheme].numPairs) {pairIndex in
-            emojis[pairIndex] // Provide random element
-        }
+        model = EmojiMemoryGame.createMemoryGame(theme: theme)
+    }
+
+    func changeTheme(theme: theme) {
+        self.theme = theme
+        newGame()
     }
     
     func choose(_ card: Card) {

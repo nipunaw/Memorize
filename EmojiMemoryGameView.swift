@@ -151,9 +151,9 @@ struct CardView: View {
     
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct EmojiMemoryGameView_Previews: PreviewProvider {
     static var previews: some View {
-        let game = EmojiMemoryGame()
+        let game = EmojiMemoryGame(theme: .constant(ThemeStore(named: "Preview").theme(at: 0)))
         EmojiMemoryGameView(game: game)
             .preferredColorScheme(.dark)
         EmojiMemoryGameView(game: game)
