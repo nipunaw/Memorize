@@ -53,6 +53,9 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
         model.score
     }
     
+    var gameStarted: Bool {
+        model.gameStarted
+    }
     
     // MARK: - Intent(s)
     func newGame() {
@@ -70,6 +73,10 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     
     func shuffle() {
         model.shuffle()
+    }
+    
+    func startGame() {
+        model.startGame()
     }
     
 }

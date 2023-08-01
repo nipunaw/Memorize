@@ -11,6 +11,7 @@ import Foundation
 struct MemoryGame<CardContent> where CardContent: Equatable{
     private(set) var cards: Array<Card> //Read-only
     private(set) var score: Int
+    private(set) var gameStarted: Bool = false
     private var indexOfTheOneAndOnlyFaceUpCard: Int? { // Computed property = every time variable is called, property is computed
         get { cards.indices.filter({cards[$0].isFaceUp}).oneAndOnly } // Filters to face-up card indices and returns if there's only one (extended functionality)
         set { cards.indices.forEach{cards[$0].isFaceUp = ($0 == newValue)} } // For each index in card indices, set face down except for card turned over
@@ -44,6 +45,10 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             } 
    
         }
+    }
+    
+    mutating func startGame() {
+        gameStarted = true
     }
     
     mutating func shuffle() {

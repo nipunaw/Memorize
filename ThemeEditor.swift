@@ -8,14 +8,15 @@ import SwiftUI
 
 struct ThemeEditor: View {
     @Binding var theme: Theme
+    private let colors = ["red", "blue", "green", "purple", "orange", "yellow"]
     
     var body: some View {
         Form {
             nameSection
             addEmojisSection
             removeEmojiSection
-            //cardCountSection
-            //colorSection
+            cardCountSection
+            colorSection
         }
         .navigationTitle("Edit \(theme.name)")
         .frame(minWidth: 300, minHeight: 350)
@@ -60,6 +61,22 @@ struct ThemeEditor: View {
                 }
             }
             .font(.system(size: 40))
+        }
+    }
+    
+    var cardCountSection: some View {
+        Section(header: Text("Card Count")) {
+            Stepper("\(theme.numPairs) Pairs", value: $theme.numPairs, in: 2...theme.emojis.count)
+        }
+    }
+    
+    var colorSection: some View {
+        Section(header: Text("Color")) {
+            Picker("Theme Color", selection: $theme.color) {
+                ForEach(colors, id: \.self) {
+                    Text($0)
+                }
+            }
         }
     }
 

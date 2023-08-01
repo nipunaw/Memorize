@@ -30,6 +30,11 @@ struct EmojiMemoryGameView: View { // Specify struct behaves like a View (adhere
             deckBody
         }
         .padding()
+        .onAppear {
+            if game.gameStarted {
+                dealt = Set<Int>(game.cards.map {$0.id})
+            }
+        }
 
     }
     
@@ -40,7 +45,7 @@ struct EmojiMemoryGameView: View { // Specify struct behaves like a View (adhere
     }
     
     private func isUndealt(_ card: EmojiMemoryGame.Card) -> Bool {
-        !dealt.contains(card.id)
+        return !dealt.contains(card.id)
     }
     
     private func dealAnimation(for card: EmojiMemoryGame.Card) -> Animation {
@@ -87,6 +92,7 @@ struct EmojiMemoryGameView: View { // Specify struct behaves like a View (adhere
         .frame(width: CardConstants.undealtWidth, height: CardConstants.undealtHeight)
         .foregroundColor(game.themeColor)
         .onTapGesture {
+            game.startGame() // Start the game
             for card in game.cards {
                 withAnimation(dealAnimation(for: card)) { // We do multiple card-dealing animations at once, but with varying delays to give appearance of dealing one at a time
                     deal(card) // Helps to keep card view out of sync with container
@@ -130,7 +136,7 @@ struct CardView: View {
             ZStack {
                 Pie(startAngle: Angle(degrees: 0-90), endAngle: Angle(degrees: 110-90))
                     .padding(5).opacity(0.5)
-                Text(card.content)
+                Text(String(card.content))
                     .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
                     .animation(Animation.easeInOut(duration: 1), value: card.isMatched) // Implicit animation (animates already on-screen views). By using new version of .animation() with value parameter, it's more akin to explicit animation
                     .font(font(in: geometry.size)) // Otherwise, with pure implicit, you'd have to modify .font calculation as it's non-animatable and causes glitces
@@ -151,12 +157,13 @@ struct CardView: View {
     
 }
 
-struct EmojiMemoryGameView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame(theme: ThemeStore(named: "Preview").theme(at: 0))
-        EmojiMemoryGameView(game: game)
-            .preferredColorScheme(.dark)
-        EmojiMemoryGameView(game: game)
-            .preferredColorScheme(.light)
-    }
-}
+//struct EmojiMemoryGameView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let game = EmojiMemoryGame()
+//        let theme = ThemeStore(named: "Preview").theme(at: 0)
+//        EmojiMemoryGameView(game: game, theme: theme)
+//            .preferredColorScheme(.dark)
+//        EmojiMemoryGameView(game: game, theme: theme)
+//            .preferredColorScheme(.light)
+//    }
+//}
