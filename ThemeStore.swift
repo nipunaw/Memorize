@@ -9,12 +9,12 @@ import Foundation
 
 struct Theme: Identifiable, Codable, Hashable {
     var name: String
-    var color: String
+    var color: RGBAColor
     var emojis: String
     var numPairs: Int
     var id: Int
 
-    fileprivate init(name: String, color: String, emojis: String, numPairs: Int, id: Int) {
+    fileprivate init(name: String, color: RGBAColor, emojis: String, numPairs: Int, id: Int) {
         self.name = name
         self.color = color
         self.emojis = emojis
@@ -52,12 +52,12 @@ class ThemeStore: ObservableObject {
         self.name = name
         restoreFromUserDefaults()
         if themes.isEmpty {
-            addTheme(named: "Vehicles", color: "red", emojis: "🚙🚗🚘🚕🚖🏎🚚🛻🚛🚐🚓🚔🚑🚒🚀✈️🛫🛬🛩🚁🛸🚲🏍🛶⛵️🚤🛥🛳⛴🚢🚂🚝🚅🚆🚊🚉🚇🛺🚜")
-            addTheme(named: "Sports", color: "blue", emojis: "🏈⚾️🏀⚽️🎾🏐🥏🏓⛳️🥅🥌🏂⛷🎳")
-            addTheme(named: "Music", color: "green", emojis: "🎼🎤🎹🪘🥁🎺🪗🪕🎻")
-            addTheme(named: "Animals", color: "purple", emojis: "🐥🐣🐂🐄🐎🐖🐏🐑🦙🐐🐓🐁🐀🐒🦆🦅🦉🦇🐢🐍🦎🦖🦕🐅🐆🦓🦍🦧🦣🐘🦛🦏🐪🐫🦒🦘🦬🐃🦙🐐🦌🐕🐩🦮🐈🦤🦢🦩🕊🦝🦨🦡🦫🦦🦥🐿🦔")
-            addTheme(named: "Animal Faces", color: "orange", emojis: "🐵🙈🙊🙉🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐸🐲")
-            addTheme(named: "Flora", color: "yellow", emojis: "🌲🌴🌿☘️🍀🍁🍄🌾💐🌷🌹🥀🌺🌸🌼🌻")
+            addTheme(named: "Vehicles", color: Color.green, emojis: "🚙🚗🚘🚕🚖🏎🚚🛻🚛🚐🚓🚔🚑🚒🚀✈️🛫🛬🛩🚁🛸🚲🏍🛶⛵️🚤🛥🛳⛴🚢🚂🚝🚅🚆🚊🚉🚇🛺🚜")
+            addTheme(named: "Sports", color: Color.red, emojis: "🏈⚾️🏀⚽️🎾🏐🥏🏓⛳️🥅🥌🏂⛷🎳")
+            addTheme(named: "Music", color: Color.blue, emojis: "🎼🎤🎹🪘🥁🎺🪗🪕🎻")
+            addTheme(named: "Animals", color: Color.yellow, emojis: "🐥🐣🐂🐄🐎🐖🐏🐑🦙🐐🐓🐁🐀🐒🦆🦅🦉🦇🐢🐍🦎🦖🦕🐅🐆🦓🦍🦧🦣🐘🦛🦏🐪🐫🦒🦘🦬🐃🦙🐐🦌🐕🐩🦮🐈🦤🦢🦩🕊🦝🦨🦡🦫🦦🦥🐿🦔")
+            addTheme(named: "Animal Faces", color: Color.orange, emojis: "🐵🙈🙊🙉🐶🐱🐭🐹🐰🦊🐻🐼🐻‍❄️🐨🐯🦁🐮🐷🐸🐲")
+            addTheme(named: "Flora", color: Color.purple, emojis: "🌲🌴🌿☘️🍀🍁🍄🌾💐🌷🌹🥀🌺🌸🌼🌻")
         }
     }
     
@@ -77,7 +77,7 @@ class ThemeStore: ObservableObject {
     }
     
     // Might have to make emojis optional
-    func addTheme(named name: String, color: String, emojis: String = "", numPairs: Int? = nil, at index: Int = 0) {
+    func addTheme(named name: String, color: Color, emojis: String = "", numPairs: Int? = nil, at index: Int = 0) {
         let unique = (themes.max(by: { $0.id < $1.id })?.id ?? 0) + 1 // Find a unique ID
         let safeNumPairs = numPairs != nil && numPairs! <= emojis.count ? numPairs! : emojis.count
         let theme = Theme(name: name, color: color, emojis: emojis, numPairs: safeNumPairs, id: unique)
