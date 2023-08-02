@@ -5,26 +5,9 @@
 //  Created by Nipuna Weerapperuma on 7/19/23.
 //
 
-import Foundation
+import SwiftUI
 
-struct Theme: Identifiable, Codable, Hashable {
-    var name: String
-    var color: RGBAColor
-    var emojis: String
-    var numPairs: Int
-    var id: Int
-
-    fileprivate init(name: String, color: RGBAColor, emojis: String, numPairs: Int, id: Int) {
-        self.name = name
-        self.color = color
-        self.emojis = emojis
-        self.numPairs = numPairs
-        self.id = id
-    }
-}
-
-
-class ThemeStore: ObservableObject {
+class ThemeStore: ObservableObject { // Theme view model
     let name: String
 
     @Published var themes = [Theme]() {

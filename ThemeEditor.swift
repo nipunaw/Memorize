@@ -8,18 +8,20 @@ import SwiftUI
 
 struct ThemeEditor: View {
     @Binding var theme: Theme
-    private let colors = ["red", "blue", "green", "purple", "orange", "yellow"]
+    @State var showEmojiAlert: Bool = false
+    //private let colors = ["red", "blue", "green", "purple", "orange", "yellow"]
     
     var body: some View {
         Form {
             nameSection
-            addEmojisSection
             removeEmojiSection
+            addEmojisSection
             cardCountSection
             colorSection
         }
         .navigationTitle("Edit \(theme.name)")
-        .frame(minWidth: 300, minHeight: 350)
+        .alert("Need at least 2 Emojis", isPresented: $showEmojiAlert) {}
+        //.frame(minWidth: 300, minHeight: 350)
     }
     
     var nameSection: some View {
@@ -48,14 +50,21 @@ struct ThemeEditor: View {
     }
     
     var removeEmojiSection: some View {
-        Section(header: Text("Remove Emoji")) {
+        Section(header: Text("Emojis - Tap Emojis to exclude")) {
             let emojis = theme.emojis.removingDuplicateCharacters.map { String($0) }
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
                 ForEach(emojis, id: \.self) { emoji in
                     Text(emoji)
                         .onTapGesture {
                             withAnimation {
-                                theme.emojis.removeAll(where: { String($0) == emoji })
+                                if theme.emojis.count > 2 {
+                                    theme.emojis.removeAll(where: { String($0) == emoji })
+                                    if theme.numPairs > theme.emojis.count {
+                                        theme.numPairs = theme.emojis.count
+                                    }
+                                } else {
+                                    showEmojiAlert = true
+                                }
                             }
                         }
                 }
@@ -72,11 +81,7 @@ struct ThemeEditor: View {
     
     var colorSection: some View {
         Section(header: Text("Color")) {
-            Picker("Theme Color", selection: $theme.color) {
-                ForEach(colors, id: \.self) {
-                    Text($0)
-                }
-            }
+            ColorPicker("Color", selection: $theme.convertedColor)
         }
     }
 

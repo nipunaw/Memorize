@@ -8,9 +8,11 @@ import SwiftUI
 
 struct ThemeManager: View {
     @EnvironmentObject var store: ThemeStore
-    
     @State private var editMode: EditMode = .inactive
+    @State private var addMode: Bool = false
     @State private var themeToEdit: Theme?
+    @State private var themeToAdd: Theme?
+    @State private var newTheme: Theme?
     @State private var activeGames: [Int:EmojiMemoryGame] = [:]
     
     var body: some View {
@@ -20,8 +22,8 @@ struct ThemeManager: View {
                     if let game = accessMemoryGame(for: theme) {
                         NavigationLink(destination: EmojiMemoryGameView(game: game)) {
                             VStack(alignment: .leading) {
-                                Text(theme.name)
-                                Text("\(theme.numPairs) pairs from \(theme.emojis)")
+                                Text(theme.name).bold().foregroundColor(theme.convertedColor)
+                                Text("\(theme.numPairs) pairs from \(theme.emojis.count < 5 ? theme.emojis : theme.emojis.prefix(4)+"...")")
                             }
                             .gesture(editMode == .active ? tap(theme: theme) : nil)
                         }
@@ -37,12 +39,33 @@ struct ThemeManager: View {
             .navigationTitle("Memorize")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                EditButton()
+                ToolbarItem(placement: .navigationBarLeading) {addButton}
+                ToolbarItem {EditButton()}
             }
             .environment(\.editMode, $editMode)
-            .popover(item: $themeToEdit) { theme in
+            .sheet(item: $themeToEdit) { theme in // sheet instead of popover for iPad UI
                 ThemeEditor(theme: $store.themes[theme])
+                    .onChange(of: store.themes[theme]) { changedTheme in
+                        activeGames[theme.id]?.changeTheme(theme: changedTheme) // You can change theme on existing game, or create new game
+                    }
             }
+            .sheet(item: $themeToAdd) { theme in // sheet instead of popover for iPad UI
+                ThemeEditor(theme: $store.themes[theme])
+                    .onDisappear {
+                        activeGames[theme.id] = EmojiMemoryGame(theme: store.themes[theme]) // You create new game once it disappears
+                    }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .navigationViewStyle(StackNavigationViewStyle()) // For iPad UI (edge cases: artifacting when re-arranging themes; editing requires clicking on name)
+    }
+    
+    var addButton : some View {
+        Button {
+            store.addTheme(named: "New Theme", color: Color.red, emojis: "😀😇")
+            themeToAdd = store.themes.first
+        } label: {
+            Image(systemName: "plus")
         }
     }
     

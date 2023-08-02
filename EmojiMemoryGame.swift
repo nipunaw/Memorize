@@ -12,8 +12,9 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     typealias Card = MemoryGame<Character>.Card // Type alias allows us to simply call this typing a 'Card'
     
     private static func createMemoryGame(theme: Theme) -> MemoryGame<Character> {
-        MemoryGame<Character>(numberOfPairsOfCards: theme.numPairs) {_ in
-            theme.emojis.randomElement()!
+        let randomEmojis = theme.emojis.shuffled()
+        return MemoryGame<Character>(numberOfPairsOfCards: theme.numPairs) {pairIndex in
+            randomEmojis[pairIndex]
         }
     }
     
@@ -23,7 +24,7 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     }
     
     @Published private var model: MemoryGame<Character> // We can create a collection of memory games with different themes?
-    private var theme: Theme
+    private var theme: Theme // Don't need to use 'didSet' property since we have changeTheme method below
     // Published - designates object to observe and announce the changes of
     // private - no write or read access to this 'model' variable
     
@@ -38,15 +39,7 @@ class EmojiMemoryGame: ObservableObject { // Designate as an 'announcer' of chan
     }
     
     var themeColor: Color { //Interprets color and returns
-        switch theme.color {
-        case "red": return Color.red
-        case "blue": return Color.blue
-        case "green": return Color.green
-        case "orange": return Color.orange
-        case "yellow": return Color.yellow
-        case "purple": return Color.purple
-        default: return Color.pink
-        }
+        Color(rgbaColor: theme.color)
     }
     
     var score: Int {
